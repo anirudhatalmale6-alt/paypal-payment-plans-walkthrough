@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>PayPal payment plans — walkthrough</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --panel: #f7f8fa;
+    --ink: #14181f;
+    --muted: #5b6472;
+    --line: #e2e6ec;
+    --accent: #0b5cd5;
+    --ok: #1d7a4c;
+    --warn: #a35c00;
+    --stop: #b32d2e;
+    --code-bg: #f0f2f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1319; --panel: #161b23; --ink: #e6eaf0; --muted: #99a3b3;
+      --line: #262e3a; --accent: #6ba4ff; --ok: #56c48b; --warn: #e0a34e;
+      --stop: #ef6f6f; --code-bg: #1b212b;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 3rem 1.25rem 6rem; }
+
+  header.top { border-bottom: 1px solid var(--line); padding-bottom: 1.75rem; margin-bottom: 2.5rem; }
+  header.top h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .5rem; letter-spacing: -.02em; }
+  header.top p { margin: 0; color: var(--muted); }
+
+  h2 {
+    font-size: 1.25rem; letter-spacing: -.01em; margin: 3.25rem 0 .85rem;
+    padding-top: 1.75rem; border-top: 1px solid var(--line);
+  }
+  h2:first-of-type { border-top: 0; padding-top: 0; }
+  h3 { font-size: 1rem; margin: 2rem 0 .5rem; }
+  p, li { margin: 0 0 .9rem; }
+  ul, ol { padding-left: 1.35rem; }
+  li { margin-bottom: .5rem; }
+  a { color: var(--accent); }
+
+  code {
+    background: var(--code-bg); border-radius: 4px; padding: .1em .35em;
+    font: .85em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+
+  figure { margin: 1.5rem 0 2rem; }
+  figure img {
+    display: block; max-width: 100%; height: auto;
+    border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  }
+  figcaption { color: var(--muted); font-size: .85rem; margin-top: .6rem; }
+  figure a { display: block; }
+  figure a::after { content: "click to view full size"; display: block; font-size: .78rem; color: var(--muted); margin-top: .35rem; }
+
+  .lede { font-size: 1.05rem; }
+  .muted { color: var(--muted); }
+
+  .box {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 10px; padding: 1.1rem 1.25rem; margin: 1.5rem 0;
+  }
+  .box > :last-child { margin-bottom: 0; }
+  .box h3 { margin-top: 0; }
+  .box--ask { border-left: 4px solid var(--accent); }
+  .box--warn { border-left: 4px solid var(--warn); }
+
+  .step { display: flex; gap: 1rem; margin: 0 0 1.5rem; }
+  .step .n {
+    flex: 0 0 1.9rem; height: 1.9rem; border-radius: 50%;
+    background: var(--accent); color: #fff; font-size: .9rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; margin-top: .15rem;
+  }
+  .step .body > :last-child { margin-bottom: 0; }
+  .who {
+    display: inline-block; font-size: .72rem; letter-spacing: .04em;
+    text-transform: uppercase; font-weight: 700; border-radius: 999px;
+    padding: .12rem .55rem; margin-left: .4rem; vertical-align: 1px;
+  }
+  .who--you { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+  .who--me  { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+
+  .tbl { width: 100%; overflow-x: auto; margin: 1.25rem 0 2rem; }
+  table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+  th, td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 600; white-space: nowrap; }
+
+  details {
+    border-bottom: 1px solid var(--line); padding: .85rem 0;
+  }
+  details summary { cursor: pointer; font-weight: 600; list-style: none; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "＋ "; color: var(--muted); }
+  details[open] summary::before { content: "－ "; }
+  details .a { padding-top: .7rem; }
+  details .a > :last-child { margin-bottom: 0; }
+
+  .no li::marker { color: var(--stop); }
+
+  footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>PayPal payment plans — walkthrough</h1>
+  <p>Everything I would have covered on a call, written down so you can re-read it, forward it, and hold me to it.</p>
+</header>
+
+<p class="lede">You asked for PayPal subscriptions. Once you described what you actually
+wanted — <em>set the number of months a client should pay the remaining balance, they
+choose 3, 4 or 6, then their account gets charged monthly</em> — that turned out to be a
+different product. So there are two halves here, and the instalment half is the bigger one.</p>
+
+<div class="box">
+  <h3>Payment plans <span class="muted">— the main thing</span></h3>
+  <p>Your staff enter what a customer owes and which lengths to offer. The customer opens
+  a link, picks one, and PayPal takes it monthly until the balance is clear, then stops
+  by itself.</p>
+  <h3>Subscription plans <span class="muted">— the second half</span></h3>
+  <p>Ordinary recurring plans, monthly or yearly, at any rate you like, created from
+  wp-admin without touching config files.</p>
+</div>
+
+<h2>1. What your customer sees</h2>
+
+<p>One link per customer. No account, no login, nothing to install. The figures on the
+cards are the real amounts that will be charged — not "from $x".</p>
+
+<figure>
+  <a href="img/cust-chooser.png" target="_blank" rel="noopener"><img src="img/cust-chooser.png" alt="Customer page showing a 1000.00 USD balance with three options: 3 monthly payments of 333.33, 4 of 250.00, 6 of 166.66."></a>
+  <figcaption>A $1,000 balance offered over 3, 4 or 6 months. Note the 3-month option:
+  333.34 first, then 333.33 twice. A balance rarely divides evenly, and the odd cent has
+  to go somewhere — see section 5.</figcaption>
+</figure>
+
+<p>They approve at PayPal once. After that the page turns into a progress view, and there
+is nothing left for them to click:</p>
+
+<figure>
+  <a href="img/cust-partpaid.png" target="_blank" rel="noopener"><img src="img/cust-partpaid.png" alt="Customer page showing 750.00 USD balance to pay, 250.00 of 1000.00 already paid, and 1 of 3 payments made."></a>
+  <figcaption>The same link, later. The count comes from payments that actually cleared,
+  not from the calendar — a failed charge must not read as paid.</figcaption>
+</figure>
+
+<h2>2. What you see</h2>
+
+<p>A <strong>PayPal</strong> menu appears in wp-admin with three screens.</p>
+
+<h3>Payment Plans</h3>
+<figure>
+  <a href="img/admin-payment-plans.png" target="_blank" rel="noopener"><img src="img/admin-payment-plans.png" alt="wp-admin screen: New payment plan form with customer, reference, balance owed, payment lengths to offer, internal note; below it Settings; below that a table of existing plans."></a>
+  <figcaption>Create a customer's plan, set the site-wide defaults, and see every plan
+  you have issued. Tick one length to fix it yourself; tick several to let the customer
+  choose.</figcaption>
+</figure>
+
+<h3>One customer, in detail</h3>
+<figure>
+  <a href="img/admin-arrangement-detail.png" target="_blank" rel="noopener"><img src="img/admin-arrangement-detail.png" alt="Detail screen showing reference, customer, balance, paid to date, status, term, subscription id, the customer link, the payment schedule and the payments received."></a>
+  <figcaption>What they owe, what has arrived, the exact schedule, and the link to send
+  them. Every payment is logged against PayPal's own sale id.</figcaption>
+</figure>
+
+<h3>Subscription Plans</h3>
+<figure>
+  <a href="img/admin-subscription-plans.png" target="_blank" rel="noopener"><img src="img/admin-subscription-plans.png" alt="wp-admin screen listing subscription plans with price, billing interval, length, trial, status and plan id, plus an Add a plan form."></a>
+  <figcaption>Monthly or yearly, any rate, optional free trial and joining fee. There is
+  deliberately no Delete button — PayPal has no delete, and pretending otherwise would
+  lie to you. Retire stops new sign-ups and leaves existing subscribers billing.</figcaption>
+</figure>
+
+<h3>Status &amp; Log</h3>
+<figure>
+  <a href="img/admin-status.png" target="_blank" rel="noopener"><img src="img/admin-status.png" alt="Status screen showing environment sandbox, missing client id, missing webhook id, the webhook URL, the subscription plans, the payment plan terms and the customer page."></a>
+  <figcaption>Where you check the plumbing. Right now it says <em>missing</em> because it
+  has never been pointed at a PayPal account — that is section 3.</figcaption>
+</figure>
+
+<h2>3. Getting it live</h2>
+
+<p>Six steps. The badge says who does each one.</p>
+
+<div class="step"><div class="n">1</div><div class="body">
+  <strong>Create the PayPal app</strong><span class="who who--you">you</span>
+  <p>In your PayPal Developer account, create an app and copy the <strong>sandbox</strong>
+  client ID and secret. I cannot do this — I do not log into websites or dashboards, and
+  it suits your own requirement that the app lives under your account rather than mine.</p>
+</div></div>
+
+<div class="step"><div class="n">2</div><div class="body">
+  <strong>Send me those two values, plus your site's https address</strong><span class="who who--you">you</span>
+  <p>Send them in the Freelancer chat. Sandbox credentials cannot move real money, so
+  there is nothing at risk at this stage. Live credentials come later and separately.</p>
+</div></div>
+
+<div class="step"><div class="n">3</div><div class="body">
+  <strong>Run the sandbox end to end and send you the log</strong><span class="who who--me">me</span>
+  <p>Create the plans, register the webhook, run a real payment plan through PayPal's
+  sandbox, and send you the log showing every action and the webhook each one fired. You
+  see it working before anything touches your site.</p>
+  <p class="muted">Risk here: none. Sandbox is a separate world — sandbox plans are
+  invisible to live customers and vice versa.</p>
+</div></div>
+
+<div class="step"><div class="n">4</div><div class="body">
+  <strong>Install on your site</strong><span class="who who--me">me</span>
+  <p>The plugin folder goes in, the two credentials go in <code>wp-config.php</code> —
+  not the database, because database exports get emailed around and a client secret in
+  one is a live key in a spreadsheet. Then one page with the shortcode
+  <code>[paypal_payment_plan]</code> on it.</p>
+  <p class="muted">Risk here: low, and reversible. Nothing existing is modified;
+  deactivating the plugin returns the site to exactly where it was.</p>
+</div></div>
+
+<div class="step"><div class="n">5</div><div class="body">
+  <strong>You test it yourself, still in sandbox</strong><span class="who who--you">you</span>
+  <p>Issue yourself a plan, click through it as a customer, watch the payments land on
+  the detail screen. Nothing goes live until you say this looks right.</p>
+</div></div>
+
+<div class="step"><div class="n">6</div><div class="body">
+  <strong>Switch to live</strong><span class="who who--me">me</span>
+  <p>Live credentials, one setting changed, setup re-run to create the live plans, and
+  the webhook re-registered against live. Sandbox history stays where it is and never
+  mixes with real money.</p>
+  <p class="muted">Risk here: this is the one that matters — real cards. Which is why
+  steps 3 and 5 exist.</p>
+</div></div>
+
+<h2>4. What I need from you</h2>
+
+<div class="box box--ask">
+  <ul>
+    <li>Sandbox <strong>client ID</strong> and <strong>secret</strong> from your PayPal Developer account</li>
+    <li>Your site's <strong>https address</strong>, so the webhook can be registered against it</li>
+    <li>An answer to the pricing question in section 5</li>
+    <li>Later, once you are happy: the live client ID and secret, and FTP or file access
+    to the site</li>
+  </ul>
+  <p class="muted">I do not need, and will not ask for, your PayPal account login or your
+  WordPress admin password.</p>
+</div>
+
+<h2>5. The one decision I need from you</h2>
+
+<div class="box box--warn">
+  <p><strong>Should a longer plan cost more?</strong></p>
+  <p>Right now it does not. $1,000 costs $1,000 whether the customer takes 3 months or 6,
+  and the page says <em>"no extra charge"</em> on every option. That is a real business
+  decision and I am not going to invent a markup on your behalf.</p>
+  <p>If you want longer terms priced higher — interest, an admin fee, whatever — tell me
+  the numbers and it is a small change. My only strong opinion: it must be shown on the
+  customer's screen, not buried in the arithmetic.</p>
+</div>
+
+<h3>Why the odd cent moves</h3>
+<p>$1,000 over 3 months is 333.33 recurring. Somebody has to absorb the cent. It goes on
+the <strong>first</strong> payment — 333.34, then 333.33, then 333.33 — never the last.
+If it went last, a customer who cancels part-way through is left with a closing figure
+that matches nothing anyone quoted them.</p>
+
+<div class="tbl">
+<table>
+  <thead><tr><th>Balance</th><th>Term</th><th>First payment</th><th>Then</th><th>Total</th></tr></thead>
+  <tbody>
+    <tr><td>1,200.00</td><td>3</td><td>400.00</td><td>2 × 400.00</td><td>1,200.00</td></tr>
+    <tr><td>1,000.00</td><td>3</td><td><strong>333.34</strong></td><td>2 × 333.33</td><td>1,000.00</td></tr>
+    <tr><td>1,000.00</td><td>4</td><td>250.00</td><td>3 × 250.00</td><td>1,000.00</td></tr>
+    <tr><td>1,000.00</td><td>6</td><td><strong>166.70</strong></td><td>5 × 166.66</td><td>1,000.00</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>6. What this does not do</h2>
+
+<ul class="no">
+  <li><strong>It does not chase a debt.</strong> Cancelling a plan stops PayPal charging;
+  the outstanding balance stays on record so a human can follow it up. Nothing here sends
+  demand letters.</li>
+  <li><strong>It does not change a plan mid-flight.</strong> PayPal freezes a plan's
+  schedule once a customer approves it. Changing someone's balance means cancelling and
+  issuing a new plan for the remainder.</li>
+  <li><strong>It does not take cards directly.</strong> Everything goes through PayPal
+  checkout. No card details ever touch your site, which is the point.</li>
+  <li><strong>It is not a credit check.</strong> If a customer's card fails, PayPal
+  retries and the plan is flagged <code>payment_failed</code> on your screen. Deciding
+  what to do about that is yours.</li>
+  <li><strong>It does not do partial refunds automatically.</strong> A refund issued in
+  PayPal is recorded here and the paid-to-date recalculated, but the balance is not
+  re-spread across the remaining months.</li>
+  <li><strong>No design work is included.</strong> The customer page inherits your
+  theme's fonts and colours rather than imposing its own.</li>
+</ul>
+
+<h2>7. How I have proved it works so far</h2>
+
+<p>Everything above was built before any PayPal credentials existed, so it has been
+verified the ways that do not need an account:</p>
+
+<ul>
+  <li><strong>193 automated checks</strong>, no network needed — 146 on the library, 47
+  on the WordPress side.</li>
+  <li>The screenshots on this page are the <strong>real screens</strong>, rendered from
+  the actual plugin code against WordPress's own admin stylesheets. They are not
+  mock-ups, so they cannot flatter the thing they show.</li>
+  <li><strong>Mutation testing.</strong> I break the code on purpose and check the tests
+  notice. One break survived: making the quote ignore the chosen term, so every option
+  showed the 3-month price. All the tests still passed, because the only figure I had
+  asserted was the total — which is identical across terms by design. That is exactly the
+  bug a customer would have seen. Assertions rewritten; that break now fails four checks.</li>
+  <li>Reading those screenshots caught three real faults that no test was looking for: a
+  running plan that greeted the customer with "your payment plan is set up" on every
+  visit for six months, a destructive Cancel button styled identically to a harmless one,
+  and a settings screen dumping raw JSON at you.</li>
+</ul>
+
+<div class="box">
+  <p><strong>The one that would have cost you money.</strong> PayPal lets you override a
+  plan's prices per customer — that is what makes one reusable plan work for every
+  balance. If PayPal ever ignores that override it does <em>not</em> return an error. It
+  creates the subscription, hands back a perfectly good approval link, and then charges
+  the template's placeholder price of 1.00 a month.</p>
+  <p>So the code reads the plan back off PayPal after creating it, compares every payment
+  against what it calculated, and refuses to hand over the approval link if they differ.
+  The customer sees an error instead of a plan. Nothing has been charged at that point.</p>
+</div>
+
+<h2>8. The things you would have asked on a call</h2>
+
+<details>
+  <summary>Why not just use a subscriptions plugin?</summary>
+  <div class="a"><p>Because none of them do this. Off-the-shelf subscription plugins sell
+  a fixed product at a fixed price forever. You need an arbitrary balance split over a
+  term the customer picks, stopping on its own. Your brief also specifically asked for
+  the REST API rather than a plugin, and that turned out to be the right call.</p></div>
+</details>
+
+<details>
+  <summary>Where does the money go?</summary>
+  <div class="a"><p>Straight into your PayPal account, on your PayPal app, under your own
+  Developer credentials. Nothing routes through me. I never hold your credentials beyond
+  the sandbox testing, and the live ones go into your <code>wp-config.php</code>, not into
+  anything of mine.</p></div>
+</details>
+
+<details>
+  <summary>How does the customer get their link?</summary>
+  <div class="a"><p>You copy it off the detail screen and send it however you already talk
+  to them — email, WhatsApp, on an invoice. Anyone holding the link can set that one plan
+  up, so treat it exactly like an emailed invoice link. It exposes that single balance and
+  nothing else: no other customer, no list, no account.</p></div>
+</details>
+
+<details>
+  <summary>What if a payment fails?</summary>
+  <div class="a"><p>PayPal retries on its own schedule. The plan shows as
+  <code>payment_failed</code> on your screen and clears itself when a charge succeeds. If
+  the retries run out and the plan ends with money still owed, it is flagged
+  <code>ended_short</code> — the one status worth watching, because it means a human needs
+  to make a phone call.</p></div>
+</details>
+
+<details>
+  <summary>Can the customer pay it off early?</summary>
+  <div class="a"><p>Not through this page as built. PayPal subscriptions bill on a
+  schedule; there is no "settle the rest now" button in them. If you want that it is a
+  separate one-off payment button that cancels the plan on success — a small addition, but
+  an addition, so say the word and I will scope it rather than quietly assume it.</p></div>
+</details>
+
+<details>
+  <summary>What happens if the plugin is removed?</summary>
+  <div class="a"><p>Payment history stays. Uninstalling deliberately does not drop the two
+  database tables, because a record of who paid you what should outlive a plugin folder.
+  Subscriptions already running at PayPal also keep running — they live at PayPal, not on
+  your site.</p></div>
+</details>
+
+<details>
+  <summary>Can two people set up the same plan twice?</summary>
+  <div class="a"><p>No. The term is checked server-side against what that specific
+  customer was offered, so editing the request gets a 400 rather than a cheaper plan.
+  Each attempt carries an idempotency key, repeat webhook deliveries are rejected by a
+  unique index on PayPal's sale id, and paid-to-date is recalculated from the ledger
+  rather than added to — so a replayed message cannot double-count.</p></div>
+</details>
+
+<details>
+  <summary>Who owns the code?</summary>
+  <div class="a"><p>You do. It is in a private repository and I will add you as a
+  collaborator whenever you send me a GitHub username; the full source is also in the zip
+  in our chat. No licence key, no phone-home, no dependency on me being around. It is
+  plain PHP with no third-party libraries at all.</p></div>
+</details>
+
+<details>
+  <summary>Why won't you get on a call?</summary>
+  <div class="a"><p>Straight answer: I work text-only here on Freelancer — no phone, no
+  video, no screen share. It is a hard limit on how I work, not a preference. If that is a
+  dealbreaker for you I would rather know now than waste your time. What I can do is what
+  this page is: write it down, in detail, with the screens attached, so nothing depends on
+  either of us remembering what was said.</p></div>
+</details>
+
+<footer>
+  <p>Written for the Freelancer project “PayPal Flexible Payment Portal &amp; Subscription
+  Setup”. Anything here that turns out to be wrong, tell me in the chat and I will correct
+  the page rather than argue about what was agreed.</p>
+</footer>
+
+</div>
+</body>
+</html>
