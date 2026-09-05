@@ -107,7 +107,36 @@
 
   .no li::marker { color: var(--stop); }
 
+  .flow { list-style: none; padding: 0; counter-reset: flow; }
+  .flow li {
+    position: relative; padding-left: 2.4rem; margin-bottom: .85rem; counter-increment: flow;
+  }
+  .flow li::before {
+    content: counter(flow); position: absolute; left: 0; top: .1rem;
+    width: 1.6rem; height: 1.6rem; border-radius: 50%; font-size: .8rem; font-weight: 700;
+    background: var(--panel); border: 1px solid var(--line); color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flow strong { color: var(--ink); }
+
   footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+
+  /* The PDF is made from this page, and it is also what happens if anyone hits
+     print. Keep a figure and its caption on one sheet, and drop the
+     "click to view full size" line, which is a lie on paper. */
+  @media print {
+    :root {
+      --bg: #fff; --panel: #f6f7f9; --ink: #14181f; --muted: #4b5563;
+      --line: #d8dde5; --accent: #0b5cd5; --ok: #1d7a4c; --warn: #8a4d00;
+      --stop: #b32d2e; --code-bg: #f1f3f6;
+    }
+    .wrap { max-width: none; padding: 0; }
+    figure, .box, .step, details, table, .flow li { break-inside: avoid; }
+    h2 { break-after: avoid; }
+    figure a::after { content: none; }
+    figure img { max-height: 20cm; width: auto; }
+    a { color: var(--ink); text-decoration: none; }
+  }
 </style>
 </head>
 <body>
@@ -142,7 +171,7 @@ cards are the real amounts that will be charged — not "from $x".</p>
   <a href="img/cust-chooser.png" target="_blank" rel="noopener"><img src="img/cust-chooser.png" alt="Customer page showing a 1000.00 USD balance with three options: 3 monthly payments of 333.33, 4 of 250.00, 6 of 166.66."></a>
   <figcaption>A $1,000 balance offered over 3, 4 or 6 months. Note the 3-month option:
   333.34 first, then 333.33 twice. A balance rarely divides evenly, and the odd cent has
-  to go somewhere — see section 5.</figcaption>
+  to go somewhere — see section 6.</figcaption>
 </figure>
 
 <p>They approve at PayPal once. After that the page turns into a progress view, and there
@@ -154,7 +183,64 @@ is nothing left for them to click:</p>
   not from the calendar — a failed charge must not read as paid.</figcaption>
 </figure>
 
-<h2>2. What you see</h2>
+<h2>2. Invoice first, deposit, then the plan</h2>
+
+<p>You said you invoice each customer separately, that some pay a deposit and carry a
+larger remaining balance, and that you want the plan set up <em>after</em> the invoice
+goes out. That is exactly the shape this takes. There is no price list anywhere in it —
+every customer is quoted on their own.</p>
+
+<ol class="flow">
+  <li><strong>Invoice them however you already do.</strong> Nothing here sends invoices,
+  and nothing here needs to change about how you raise them.</li>
+  <li><strong>Take the deposit however you already take it.</strong> Cash, transfer, card,
+  a PayPal payment — it does not matter, because that money never passes through this.</li>
+  <li><strong>Balance owed</strong> = the invoice total <em>minus</em> the deposit. This is
+  the only figure PayPal ever charges.</li>
+  <li><strong>Deposit already paid</strong> = what you took, for the record. It is stored
+  against the plan and shown on both screens, and it is <em>never charged again</em>.</li>
+  <li><strong>Reference</strong> = your invoice number, so their page and their invoice
+  carry the same one.</li>
+</ol>
+
+<p>So a $1,340 invoice with a $500 deposit is entered as balance 840.00, deposit 500.00.
+Here is what that customer opens:</p>
+
+<figure>
+  <a href="img/cust-deposit.png" target="_blank" rel="noopener"><img src="img/cust-deposit.png" alt="Customer page reading: INV-1042, Balance to pay 840.00 USD, 1340.00 USD invoiced less the 500.00 USD deposit you have already paid, then three options at 280.00, 210.00 and 140.00 a month."></a>
+  <figcaption>Without that second line the customer sees 840 where their invoice said
+  1,340, and rings you up. The deposit line is there to stop that call.</figcaption>
+</figure>
+
+<div class="box box--warn">
+  <p><strong>The one mistake this form lets you make.</strong> Typing the <em>invoice
+  total</em> into Balance owed while <em>also</em> filling in the deposit charges the
+  customer for money they have already handed over. Nothing can detect that from the
+  outside — both numbers are perfectly legitimate — so instead the confirmation reads the
+  arithmetic back at you:</p>
+  <p><code>840.00 USD will be split into monthly payments — invoice 1340.00 USD less the
+  500.00 USD deposit already received.</code></p>
+  <p>Read that line before you send the link. It is the only guard there can be.</p>
+</div>
+
+<p class="muted">A deposit is not a first instalment. If you would rather PayPal collected
+the deposit as part of the plan, do not use that field — put the whole balance on the plan
+and let the first payment be the deposit.</p>
+
+<h3>Two things worth being straight about</h3>
+
+<p><strong>Nothing here raises or sends the invoice.</strong> If you want PayPal to issue
+the invoice too — created and emailed from this same screen, then the plan opened for
+whatever is left — that is a real addition rather than a setting, and I would rather scope
+it properly than pretend it is already there. Say the word and I will.</p>
+
+<p><strong>"Withdraw from their account" needs one click from them, once.</strong> PayPal
+will not let anyone — me, you, or itself — start pulling money from a customer without
+that customer approving it first. They approve the plan once, and from then on PayPal
+takes each month automatically with nothing further from them. That first approval is not
+something I can remove, and you would not want a payments provider that let me.</p>
+
+<h2>3. What you see</h2>
 
 <p>A <strong>PayPal</strong> menu appears in wp-admin with three screens.</p>
 
@@ -173,6 +259,14 @@ is nothing left for them to click:</p>
   them. Every payment is logged against PayPal's own sale id.</figcaption>
 </figure>
 
+<h3>The same screen, with a deposit on it</h3>
+<figure>
+  <a href="img/admin-arrangement-deposit.png" target="_blank" rel="noopener"><img src="img/admin-arrangement-deposit.png" alt="Detail screen showing Invoice total 1340.00 USD, less 500.00 USD deposit already received, and Balance on the plan 840.00 USD."></a>
+  <figcaption>Invoice total, the deposit that came off it, and the figure PayPal will
+  actually collect — kept as three separate lines so nobody has to do the subtraction in
+  their head to check it.</figcaption>
+</figure>
+
 <h3>Subscription Plans</h3>
 <figure>
   <a href="img/admin-subscription-plans.png" target="_blank" rel="noopener"><img src="img/admin-subscription-plans.png" alt="wp-admin screen listing subscription plans with price, billing interval, length, trial, status and plan id, plus an Add a plan form."></a>
@@ -185,10 +279,10 @@ is nothing left for them to click:</p>
 <figure>
   <a href="img/admin-status.png" target="_blank" rel="noopener"><img src="img/admin-status.png" alt="Status screen showing environment sandbox, missing client id, missing webhook id, the webhook URL, the subscription plans, the payment plan terms and the customer page."></a>
   <figcaption>Where you check the plumbing. Right now it says <em>missing</em> because it
-  has never been pointed at a PayPal account — that is section 3.</figcaption>
+  has never been pointed at a PayPal account — that is section 4.</figcaption>
 </figure>
 
-<h2>3. Getting it live</h2>
+<h2>4. Getting it live</h2>
 
 <p>Six steps. The badge says who does each one.</p>
 
@@ -239,13 +333,13 @@ is nothing left for them to click:</p>
   steps 3 and 5 exist.</p>
 </div></div>
 
-<h2>4. What I need from you</h2>
+<h2>5. What I need from you</h2>
 
 <div class="box box--ask">
   <ul>
     <li>Sandbox <strong>client ID</strong> and <strong>secret</strong> from your PayPal Developer account</li>
     <li>Your site's <strong>https address</strong>, so the webhook can be registered against it</li>
-    <li>An answer to the pricing question in section 5</li>
+    <li>An answer to the pricing question in section 6</li>
     <li>Later, once you are happy: the live client ID and secret, and FTP or file access
     to the site</li>
   </ul>
@@ -253,7 +347,7 @@ is nothing left for them to click:</p>
   WordPress admin password.</p>
 </div>
 
-<h2>5. The one decision I need from you</h2>
+<h2>6. The one decision I need from you</h2>
 
 <div class="box box--warn">
   <p><strong>Should a longer plan cost more?</strong></p>
@@ -283,7 +377,7 @@ that matches nothing anyone quoted them.</p>
 </table>
 </div>
 
-<h2>6. What this does not do</h2>
+<h2>7. What this does not do</h2>
 
 <ul class="no">
   <li><strong>It does not chase a debt.</strong> Cancelling a plan stops PayPal charging;
@@ -304,13 +398,13 @@ that matches nothing anyone quoted them.</p>
   theme's fonts and colours rather than imposing its own.</li>
 </ul>
 
-<h2>7. How I have proved it works so far</h2>
+<h2>8. How I have proved it works so far</h2>
 
 <p>Everything above was built before any PayPal credentials existed, so it has been
 verified the ways that do not need an account:</p>
 
 <ul>
-  <li><strong>193 automated checks</strong>, no network needed — 146 on the library, 47
+  <li><strong>212 automated checks</strong>, no network needed — 146 on the library, 66
   on the WordPress side.</li>
   <li>The screenshots on this page are the <strong>real screens</strong>, rendered from
   the actual plugin code against WordPress's own admin stylesheets. They are not
@@ -320,6 +414,12 @@ verified the ways that do not need an account:</p>
   showed the 3-month price. All the tests still passed, because the only figure I had
   asserted was the total — which is identical across terms by design. That is exactly the
   bug a customer would have seen. Assertions rewritten; that break now fails four checks.</li>
+  <li>The deposit work above got the same treatment. I broke it six ways — the deposit
+  dropped on save, added to the balance instead of subtracted from it, an unreadable
+  figure silently rounded to zero, and so on. One of the six <em>survived</em>: nothing
+  tested the path where staff actually type a deposit in, because every test read
+  arrangements that already existed. Six more checks now drive the form itself, and all
+  six breaks are caught.</li>
   <li>Reading those screenshots caught three real faults that no test was looking for: a
   running plan that greeted the customer with "your payment plan is set up" on every
   visit for six months, a destructive Cancel button styled identically to a harmless one,
@@ -337,7 +437,7 @@ verified the ways that do not need an account:</p>
   The customer sees an error instead of a plan. Nothing has been charged at that point.</p>
 </div>
 
-<h2>8. The things you would have asked on a call</h2>
+<h2>9. The things you would have asked on a call</h2>
 
 <details>
   <summary>Why not just use a subscriptions plugin?</summary>
